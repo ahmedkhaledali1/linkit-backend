@@ -1,0 +1,181 @@
+// Get order statistics
+exports.getOrderStats = catchAsync(async (req, res) => {
+  const stats = await Order.getOrderStats();
+
+  // Additional NFC card specific stats
+  const totalOrders = await Order.countDocuments();
+  const totalRevenue = await Order.aggregate([
+    { $group: { _id: null, total: { $sum: '$total' } } },
+  ]);
+
+  const recentOrders = await Order.countDocuments({
+    orderDate: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }, // Last 7 days
+  });
+
+  // Card color distribution
+  const colorStats = await Order.aggregate([
+    {
+      $group: {
+        _id: '$cardDesign.color',
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  // Logo inclusion stats
+  const logoStats = await Order.aggregate([
+    {
+      $group: {
+        _id: '$cardDesign.includePrintedLogo',
+        count: { $sum: 1 },
+        avgTotal: { $avg: '$total' },
+      },
+    },
+  ]);
+
+  // Country distribution
+  const countryStats = await Order.aggregate([
+    {
+      $group: {
+        _id: '$deliveryInfo.country',
+        count: { $sum: 1 },
+        totalRevenue: { $sum: '$total' },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      statusBreakdown: stats,
+      overview: {
+        totalOrders,
+        totalRevenue: totalRevenue[0]?.total || 0,
+        recentOrders,
+      },
+      cardStats: {
+        colorDistribution: colorStats,
+        logoInclusion: logoStats,
+        countryDistribution: countryStats,
+      },
+    },
+  });
+});
+
+// Get orders by country
+exports.getOrdersByCountry = catchAsync(async (req, res, next) => {
+  const { country } = req.params;
+
+  if (!['JO', 'UK'].includes(country)) {
+    return next(new AppError('Invalid country code. Use JO or UK', 400));
+  }
+
+  const orders = await Order.findByCountry(country);
+
+  const countryName = country === 'JO' ? 'Jordan' : 'United Kingdom';
+
+  res.status(200).json({
+    status: 'success',
+    results: orders.length,
+    data: {
+      orders,
+      country: countryName,
+    },
+  });
+});
+
+// Get orders created by me (for admin/staff)
+exports.getOrdersCreatedByMe = catchAsync(async (req, res) => {
+  const features = new APIFeatures(
+    Order.find({ createdBy: req.user._id }),
+    req.query
+  )
+    .filter()
+    .sort()
+    .fileds()
+    .paginate();
+
+  const orders = await features.query
+    .populate('customer', 'name email')
+    .populate('product', 'title price');
+
+  res.status(200).json({
+    status: 'success',
+    results: orders.length,
+    data: {
+      orders,
+    },
+  });
+});
+
+// Get order by orderId (public endpoint for order tracking)
+exports.trackOrder = catchAsync(async (req, res, next) => {
+  const { orderId } = req.params;
+
+  const order = await Order.findOne({ orderId }).select(
+    'orderId status orderDate printingDate shippingDate deliveryDate estimatedDelivery personalInfo.firstName personalInfo.lastName cardDesign.color total'
+  );
+
+  if (!order) {
+    return next(new AppError('Order not found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tracking: {
+        orderId: order.orderId,
+        customerName: `${order.personalInfo.firstName} ${order.personalInfo.lastName}`,
+        cardColor: order.cardDesign.color,
+        status: order.status,
+        total: order.formattedTotal,
+        orderDate: order.orderDate,
+        printingDate: order.printingDate,
+        shippingDate: order.shippingDate,
+        deliveryDate: order.deliveryDate,
+        estimatedDelivery: order.estimatedDelivery,
+        orderAge: order.orderAge,
+      },
+    },
+  });
+});
+
+// Get orders summary for dashboard
+exports.getOrdersDashboard = catchAsync(async (req, res) => {
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+  const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const [
+    todayOrders,
+    weekOrders,
+    monthOrders,
+    pendingOrders,
+    processingOrders,
+    shippedOrders,
+  ] = await Promise.all([
+    Order.countDocuments({ orderDate: { $gte: startOfDay } }),
+    Order.countDocuments({ orderDate: { $gte: startOfWeek } }),
+    Order.countDocuments({ orderDate: { $gte: startOfMonth } }),
+    Order.countDocuments({ status: 'pending' }),
+    Order.countDocuments({
+      status: { $in: ['confirmed', 'processing', 'printed'] },
+    }),
+    Order.countDocuments({ status: 'shipped' }),
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      dashboard: {
+        todayOrders,
+        weekOrders,
+        monthOrders,
+        pendingOrders,
+        processingOrders,
+        shippedOrders,
+      },
+    },
+  });
+});
