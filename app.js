@@ -1,6 +1,9 @@
 const fs = require('fs');
 const express = require('express');
 const app = express();
+
+app.set('trust proxy', 1);
+
 const morgan = require('morgan');
 const userRouter = require('./routes/user');
 const productRouter = require('./routes/products');
