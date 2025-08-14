@@ -55,13 +55,13 @@ exports.getAllProducts = catchAsync(async (req, res) => {
   const features = new APIFeatures(Product.find(), req.query)
     .filter()
     .sort()
-    .fileds()
+    .limitFields()
     .paginate();
-
   const products = await features.query.populate({
     path: 'createdBy',
     select: 'name email',
   });
+  // console.log('features..', products);
 
   res.status(200).json({
     status: 'success',
@@ -333,7 +333,7 @@ exports.getMyProducts = catchAsync(async (req, res) => {
   )
     .filter()
     .sort()
-    .fileds()
+    .limitFields()
     .paginate();
 
   const products = await features.query;

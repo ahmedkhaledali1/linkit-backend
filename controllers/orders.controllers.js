@@ -234,7 +234,7 @@ exports.getMyOrders = catchAsync(async (req, res) => {
   )
     .filter()
     .sort()
-    .fileds()
+    .limitFields()
     .paginate();
 
   const orders = await features.query
