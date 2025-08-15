@@ -1,7 +1,14 @@
 const fs = require('fs');
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
+app.use(
+  cors({
+    origin: ['http://localhost:8080', 'https://your-frontend-domain.com'], // add your frontend domains here
+    credentials: true, // if you need to send cookies or authentication headers
+  })
+);
 app.set('trust proxy', 1);
 
 const morgan = require('morgan');

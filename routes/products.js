@@ -53,7 +53,7 @@ router.route('/price-range').get(getProductsByPriceRange);
 router.route('/color/:color').get(getProductsByColor);
 
 // Protected routes - user must be logged in
-router.use(protect);
+// router.use(protect);
 
 // Routes for logged-in users
 router.route('/my-products').get(getMyProducts);
