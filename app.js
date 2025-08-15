@@ -5,8 +5,15 @@ const cors = require('cors');
 
 app.use(
   cors({
-    origin: ['http://localhost:8080'], // add your frontend domains here
-    // credentials: true, // if you need to send cookies or authentication headers
+    origin: [
+      'http://localhost:8080',
+      'https://localhost:8080',
+      'https://linkit-backend-production.up.railway.app',
+      'http://linkit-backend-production.up.railway.app',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 );
 app.set('trust proxy', 1);
