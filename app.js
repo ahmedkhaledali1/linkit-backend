@@ -5,12 +5,7 @@ const cors = require('cors');
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:8080',
-      'https://localhost:8080',
-      'https://linkit-backend-production.up.railway.app',
-      'http://linkit-backend-production.up.railway.app',
-    ],
+    origin: true, // Allow all origins during development
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
