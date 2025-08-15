@@ -1,13 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const cors = require('cors');
 
-app.use(
-  cors({
-    origin: ['http://localhost:8080'], // add your frontend domains here
-    // credentials: true, // if you need to send cookies or authentication headers
-  })
-);
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
   // console.log('err...', err);
