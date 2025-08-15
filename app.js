@@ -65,13 +65,13 @@ const hpp = require('hpp');
 // Middlewares
 app.use(helmet());
 
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many requests, plz try again an hour!',
-});
+// const limiter = rateLimit({
+//   max: 100,
+//   windowMs: 60 * 60 * 1000,
+//   message: 'Too many requests, plz try again an hour!',
+// });
 
-app.use('/api', limiter);
+// app.use('/api', limiter);
 
 app.use(express.json());
 // console.log(process.env);
