@@ -32,22 +32,22 @@ const ProductSchema = new mongoose.Schema(
       },
     },
 
-    colors: [
-      {
-        type: String,
-        trim: true,
-        lowercase: true,
-        validate: {
-          validator: function (color) {
-            // Allow color names or hex codes
-            const colorNameRegex = /^[a-zA-Z\s]+$/;
-            const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return colorNameRegex.test(color) || hexColorRegex.test(color);
-          },
-          message: 'Please provide a valid color name or hex code',
-        },
-      },
-    ],
+    // colors: [
+    //   {
+    //     type: String,
+    //     trim: true,
+    //     lowercase: t rue,
+    //     validate: {
+    //       validator: function (color) {
+    //         // Allow color names or hex codes
+    //         const colorNameRegex = /^[a-zA-Z\s]+$/;
+    //         const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    //         return colorNameRegex.test(color) || hexColorRegex.test(color);
+    //       },
+    //       message: 'Please provide a valid color name or hex code',
+    //     },
+    //   },
+    // ],
     images: [
       {
         type: mongoose.Schema.Types.Mixed,
@@ -58,29 +58,20 @@ const ProductSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // category: {
-    //   type: String,
-    //   trim: true,
-    //   maxlength: [50, 'Category must be less than 50 characters'],
-    // },
-    // brand: {
-    //   type: String,
-    //   trim: true,
-    //   maxlength: [50, 'Brand must be less than 50 characters'],
-    // },
-    // inStock: {
-    //   type: Boolean,
-    //   default: true,
-    // },
-    // stockQuantity: {
-    //   type: Number,
-    //   default: 0,
-    //   min: [0, 'Stock quantity cannot be negative'],
-    // },
-    // isActive: {
-    //   type: Boolean,
-    //   default: true,
-    // },
+    cardDesigns: [
+      {
+        color: {
+          type: String,
+
+          required: [true, 'Card color is required'],
+        },
+
+        image: {
+          type: mongoose.Schema.Types.Mixed,
+        },
+      },
+    ],
+
     createdBy: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -109,67 +100,10 @@ ProductSchema.index({ category: 1 });
 ProductSchema.index({ createdBy: 1 });
 ProductSchema.index({ isActive: 1 });
 
-// Virtual for formatted price
-// ProductSchema.virtual('formattedPrice').get(function () {
-//   return `${this.price} ${this.currency}`;
-// });
-
-// Pre-save middleware to update the updatedAt field
-ProductSchema.pre('save', function (next) {
-  if (!this.isNew) {
-    this.updatedAt = Date.now();
-  }
-  next();
-});
-
-// Pre-save middleware to ensure at least one image
-ProductSchema.pre('save', function (next) {
-  if (this.images.length === 0) {
-    this.images.push('/img/products/default-product.jpg');
-  }
-  next();
-});
-
-// Instance method to add color
-ProductSchema.methods.addColor = function (color) {
-  if (!this.colors.includes(color.toLowerCase())) {
-    this.colors.push(color.toLowerCase());
-  }
-  return this.colors;
-};
-
-// Instance method to remove color
-ProductSchema.methods.removeColor = function (color) {
-  this.colors = this.colors.filter((c) => c !== color.toLowerCase());
-  return this.colors;
-};
-
-// Instance method to add image
-ProductSchema.methods.addImage = function (imageUrl) {
-  if (!this.images.includes(imageUrl)) {
-    this.images.push(imageUrl);
-  }
-  return this.images;
-};
-
-// Instance method to remove image
-ProductSchema.methods.removeImage = function (imageUrl) {
-  this.images = this.images.filter((img) => img !== imageUrl);
-  return this.images;
-};
-
 // Static method to find products by price range
 ProductSchema.statics.findByPriceRange = function (minPrice, maxPrice) {
   return this.find({
     price: { $gte: minPrice, $lte: maxPrice },
-    isActive: true,
-  });
-};
-
-// Static method to find products by category
-ProductSchema.statics.findByCategory = function (category) {
-  return this.find({
-    category: new RegExp(category, 'i'),
     isActive: true,
   });
 };

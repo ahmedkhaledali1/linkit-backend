@@ -79,8 +79,10 @@ exports.createProduct = catchAsync(async (req, res) => {
 
   // Log uploaded images for debugging
   if (req.body.images && req.body.images.length > 0) {
-    console.log('Uploaded images:', req.body.images);
+    // console.log('Uploaded images:', req.body.images);
   }
+
+  // console.log('req.body. ', req.body);
 
   const newProduct = await Product.create(req.body);
 
@@ -89,10 +91,7 @@ exports.createProduct = catchAsync(async (req, res) => {
     data: {
       product: newProduct,
     },
-    message:
-      req.body.images && req.body.images.length > 0
-        ? `Product created with ${req.body.images.length} images uploaded`
-        : 'Product created successfully',
+    message: `Product created with   images uploaded`,
   });
 });
 

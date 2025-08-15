@@ -30,21 +30,36 @@ const processUploadedImages = (req, res, next) => {
   if (req.files && req.files.length > 0) {
     // Convert uploaded files to relative paths for database storage
     const imagePaths = req.files.map((file) => getRelativeFilePath(file));
+    // console.log('imagePaths..', imageP/aths);
 
+    // console.log('imagePaths', imagePaths);
     // Add the image paths to the request body
-    if (req.body.images) {
+    if (imagePaths && imagePaths.length > 0) {
       // If images already exist in body, merge them
-      const existingImages = Array.isArray(req.body.images)
-        ? req.body.images
-        : [req.body.images];
-      req.body.images = [...existingImages, ...imagePaths];
+
+      req.body.cardDesigns = req.body.cardDesigns.map((cardDesign, index) => ({
+        ...cardDesign,
+        image: cardDesign.image ? cardDesign.image : imagePaths[index],
+      }));
     } else {
       req.body.images = imagePaths;
     }
   }
   next();
 };
-
+const parseFormDataJSON = (req, res, next) => {
+  try {
+    if (req.body.cardDesigns && typeof req.body.cardDesigns === 'string') {
+      req.body.cardDesigns = JSON.parse(req.body.cardDesigns);
+    }
+    if (req.body.colors && typeof req.body.colors === 'string') {
+      req.body.colors = JSON.parse(req.body.colors);
+    }
+  } catch (error) {
+    console.error('Error parsing JSON fields from form-data', error);
+  }
+  next();
+};
 // Special routes with aliases (no upload needed)
 router.route('/top-5-expensive').get(aliasTopProducts, getAllProducts);
 router.route('/cheap-products').get(aliasCheapProducts, getAllProducts);
@@ -62,7 +77,13 @@ router.route('/my-products').get(getMyProducts);
 router
   .route('/')
   .get(getAllProducts)
-  .post(protect, uploadMultipleImages, processUploadedImages, createProduct);
+  .post(
+    protect,
+    uploadMultipleImages,
+    processUploadedImages,
+    parseFormDataJSON,
+    createProduct
+  );
 
 router
   .route('/:id')
