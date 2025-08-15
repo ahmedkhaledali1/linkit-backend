@@ -11,14 +11,40 @@ app.use(
     credentials: true,
   })
 );
+// Serve static files with proper CORS headers
 app.use(
   '/uploads',
+  (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Range'
+    );
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader(
+      'Access-Control-Expose-Headers',
+      'Content-Range, X-Content-Range'
+    );
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+    next();
+  },
   express.static('uploads', {
-    setHeaders: (res) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
     },
   })
 );
+
+// Ensure uploads directory exists
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 app.set('trust proxy', 1);
 
 const morgan = require('morgan');
