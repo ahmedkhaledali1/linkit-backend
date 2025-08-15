@@ -11,6 +11,14 @@ app.use(
     credentials: true,
   })
 );
+app.use(
+  '/uploads',
+  express.static('uploads', {
+    setHeaders: (res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    },
+  })
+);
 app.set('trust proxy', 1);
 
 const morgan = require('morgan');
