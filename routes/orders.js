@@ -43,7 +43,7 @@ const router = express.Router();
 // router.route('/country/:country').get(getOrdersByCountry);
 
 // Protected routes - user must be logged in
-router.use(protect);
+// router.use(protect);
 
 // User-specific routes
 // router.route('/my-orders').get(getMyOrders);
@@ -53,12 +53,10 @@ router.use(protect);
 // router.route('/customer/:customerId').get(getCustomerOrders);
 
 // Main CRUD routes with file upload support
-router.route('/').get(getAllOrders).post(
-  uploadCompanyLogo,
-  parseFormData,
-  processOrderFiles,
-  createOrder
-);
+router
+  .route('/')
+  .get(getAllOrders)
+  .post(uploadCompanyLogo, parseFormData, processOrderFiles, createOrder);
 
 router
   .route('/:id')

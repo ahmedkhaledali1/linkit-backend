@@ -3,11 +3,11 @@ const validator = require('validator');
 
 const OrderSchema = new mongoose.Schema(
   {
-    customer: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [true, 'Order must belong to a customer'],
-    },
+    // customer: {
+    //   type: mongoose.Schema.ObjectId,
+    //   ref: 'User',
+    //   required: [true, 'Order must belong to a customer'],
+    // },
     product: {
       type: mongoose.Schema.ObjectId,
       ref: 'Product',
@@ -169,60 +169,20 @@ const OrderSchema = new mongoose.Schema(
           'cancelled',
           'refunded',
         ],
-        message: 'Invalid order status',
       },
       default: 'pending',
     },
 
-    // Pricing
-    productPrice: {
-      type: Number,
-      required: [true, 'Product price is required'],
-      min: [0, 'Product price must be positive'],
-    },
-    logoSurcharge: {
-      type: Number,
-      default: 5, // Additional price for printed logo
-      min: [0, 'Logo surcharge must be positive'],
-    },
-    total: {
-      type: Number,
-      required: [true, 'Order total is required'],
-      min: [0, 'Order total must be positive'],
-    },
-    currency: {
-      type: String,
-      default: 'JOD',
-      enum: ['JOD', 'USD', 'EUR'],
-    },
-
-    // Order Management
-    orderDate: {
-      type: Date,
-      default: Date.now,
-    },
-    printingDate: {
-      type: Date,
-    },
-    shippingDate: {
-      type: Date,
-    },
-    deliveryDate: {
-      type: Date,
-    },
-    estimatedDelivery: {
-      type: Date,
-    },
-    notes: {
-      type: String,
-      trim: true,
-      maxlength: [1000, 'Notes cannot exceed 1000 characters'],
-    },
-    createdBy: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [true, 'Order must be created by a user'],
-    },
+    // total: {
+    //   type: Number,
+    //   required: [true, 'Order total is required'],
+    //   min: [0, 'Order total must be positive'],
+    // },
+    // currency: {
+    //   type: String,
+    //   default: 'JOD',
+    //   enum: ['JOD', 'USD', 'EUR'],
+    // },
   },
   {
     timestamps: true,
