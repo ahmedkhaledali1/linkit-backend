@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let uploadPath = uploadsDir;
 
+    console.log('file..', file);
     // Create subdirectories based on file type or route
     if (file.fieldname === 'images') {
       uploadPath = path.join(uploadsDir, 'images');
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
     } else if (file.fieldname === 'image') {
       uploadPath = path.join(uploadsDir, 'images');
     } else if (file.fieldname === 'companyLogo') {
-      uploadPath = path.join(uploadsDir, 'company-logos');
+      uploadPath = path.join(uploadsDir, 'companyLogo');
     } else {
       uploadPath = path.join(uploadsDir, 'general');
     }

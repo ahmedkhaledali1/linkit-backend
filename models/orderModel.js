@@ -173,11 +173,11 @@ const OrderSchema = new mongoose.Schema(
       default: 'pending',
     },
 
-    // total: {
-    //   type: Number,
-    //   required: [true, 'Order total is required'],
-    //   min: [0, 'Order total must be positive'],
-    // },
+    total: {
+      type: Number,
+      required: [true, 'Order total is required'],
+      min: [0, 'Order total must be positive'],
+    },
     // currency: {
     //   type: String,
     //   default: 'JOD',

@@ -120,7 +120,7 @@ const getValidCountries = () => {
 // Middleware to parse FormData into nested objects
 const parseFormData = (req, res, next) => {
   // console.log('Raw req.body before parsing:', req.body);
-
+  // console.log('req.files ', req.file);
   // Initialize the nested objects
   const parsedBody = {
     personalInfo: {},
@@ -198,6 +198,7 @@ const parseFormData = (req, res, next) => {
 
 // Middleware to process uploaded files for orders
 const processOrderFiles = (req, res, next) => {
+  console.log('req.file ', req.file);
   if (req.file && req.file.fieldname === 'companyLogo') {
     const companyLogoPath = getRelativeFilePath(req.file);
     // console.log('companyLogoPath from req.file...', companyLogoPath);

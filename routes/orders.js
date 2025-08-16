@@ -18,16 +18,10 @@ const {
   // getOrdersDashboard,
 } = require('../controllers/orders.controllers');
 const { protect, restrictTo } = require('../controllers/authConroller');
-const {
-  uploadCompanyLogo,
-  uploadImage,
-  getRelativeFilePath,
-} = require('../utils/fileUpload');
+const { uploadCompanyLogo } = require('../utils/fileUpload');
 const multer = require('multer');
-const {
-  parseFormData,
-  processOrderFiles,
-} = require('../utils/orderValidation');
+const { parseFormData } = require('../utils/orderValidation');
+const { processOrderFiles } = require('../utils/orderUtils');
 
 const router = express.Router();
 
@@ -56,12 +50,12 @@ const router = express.Router();
 router
   .route('/')
   .get(getAllOrders)
-  .post(uploadCompanyLogo, parseFormData, processOrderFiles, createOrder);
+  .post(uploadCompanyLogo, parseFormData, createOrder);
 
 router
   .route('/:id')
   .get(getOneOrder)
-  .patch(uploadCompanyLogo, parseFormData, processOrderFiles, updateOrder)
+  .patch(uploadCompanyLogo, parseFormData, updateOrder)
   .delete(restrictTo('admin', 'user'), deleteOrder);
 
 // Order status management

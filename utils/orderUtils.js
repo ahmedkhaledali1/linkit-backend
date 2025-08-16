@@ -1,3 +1,5 @@
+const { getRelativeFilePath } = require('./fileUpload');
+
 /**
  * Calculate order total based on product price and logo inclusion
  * @param {number} productPrice - Base product price
@@ -23,16 +25,21 @@ const calculateOrderTotal = (
  * @param {Object} orderData - Order data object
  * @returns {Object} - Modified order data with file paths
  */
-const processOrderFiles = (files, orderData) => {
-  if (!files || !files.companyLogo) return orderData;
+const processOrderFiles = (file, orderData, next) => {
+  if (!file) return orderData;
 
   // Ensure cardDesign exists
-  if (!orderData.cardDesign) {
+  if (!orderData?.cardDesign) {
     orderData.cardDesign = {};
   }
 
-  // Add company logo path
-  orderData.cardDesign.companyLogo = files.companyLogo[0].path;
+  // console.log('file.... ', file);
+  // console.log('orderData ', orderData);
+
+  // Add company logo path if file exists
+  if (file && orderData.cardDesign) {
+    orderData.cardDesign.companyLogo = getRelativeFilePath(file);
+  }
 
   return orderData;
 };
@@ -123,11 +130,7 @@ const setOrderDefaults = (orderData, user) => {
  * @returns {Array} - Array of population options
  */
 const getOrderPopulationOptions = () => {
-  return [
-    { path: 'customer', select: 'name email' },
-    { path: 'product', select: 'title price images colors' },
-    { path: 'createdBy', select: 'name email' },
-  ];
+  return [{ path: 'product', select: 'title price images colors' }];
 };
 
 /**
@@ -144,7 +147,6 @@ const formatOrderResponse = (
     status: 'success',
     data: {
       order,
-      summary: order.getOrderSummary(),
     },
     message,
   };

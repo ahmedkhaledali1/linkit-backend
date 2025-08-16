@@ -29,8 +29,8 @@ exports.getAllOrders = factory.getAll(Order, [
 // Create new NFC card order
 exports.createOrder = catchAsync(async (req, res, next) => {
   // Set default values
-  setOrderDefaults(req.body, req.user);
 
+  // console.log('req.body ', req.body);
   // Validate required fields
   const requiredFieldsError = validateRequiredFields(req.body);
   if (requiredFieldsError) {
@@ -44,7 +44,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   }
 
   // Process file uploads
-  processOrderFiles(req.files, req.body);
+  processOrderFiles(req.file, req.body);
 
   // Calculate pricing
   const { total, logoSurcharge } = calculateOrderTotal(
@@ -70,15 +70,14 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   // Create the order
   const newOrder = await Order.create(req.body);
 
+  // console.log('req.deliveryError', deliveryError);
   // Populate the created order
-  await newOrder.populate(getOrderPopulationOptions());
-
+  const respon = await newOrder.populate(getOrderPopulationOptions());
+  // console.log('respon', respon);
   // Format and send response
   const response = formatOrderResponse(
     newOrder,
-    `NFC Card order ${
-      newOrder._id
-    } created successfully! Estimated delivery: ${newOrder.estimatedDelivery?.toLocaleDateString()}`
+    `NFC Card order ${newOrder._id} created successfully!  `
   );
 
   res.status(201).json(response);
