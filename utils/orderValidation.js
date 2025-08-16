@@ -13,15 +13,13 @@ const COUNTRY_CITY_MAP = {
  * @param {Object} existingOrder - Existing order (for updates)
  * @returns {string|null} - Error message or null if valid
  */
-const validateCompanyLogo = (cardDesign, files = {}, existingOrder = null) => {
+const validateCompanyLogo = (cardDesign, file = {}, existingOrder = null) => {
   if (!cardDesign || !cardDesign.includePrintedLogo) {
     return null; // No validation needed if logo is not required
   }
 
   // Check for uploaded logo file
-  const hasUploadedLogo =
-    cardDesign.companyLogo ||
-    (files.companyLogo && files.companyLogo.length > 0);
+  const hasUploadedLogo = cardDesign.companyLogo || file;
 
   // Check for existing logo (for updates)
   const hasExistingLogo = existingOrder?.cardDesign?.companyLogo;

@@ -56,7 +56,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   req.body.logoSurcharge = logoSurcharge;
 
   // Validate company logo
-  const logoError = validateCompanyLogo(req.body.cardDesign, req.files);
+  const logoError = validateCompanyLogo(req.body.cardDesign, req.file);
   if (logoError) {
     return next(new AppError(logoError, 400));
   }
@@ -97,7 +97,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   // Validate company logo
   const logoError = validateCompanyLogo(
     req.body.cardDesign,
-    req.files,
+    req.file,
     existingOrder
   );
   if (logoError) {
