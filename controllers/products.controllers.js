@@ -98,23 +98,28 @@ exports.createProduct = catchAsync(async (req, res) => {
 // Update product
 exports.updateProduct = catchAsync(async (req, res, next) => {
   // If new images are uploaded, merge with existing images
-  if (req.body.images && req.body.images.length > 0) {
-    const existingProduct = await Product.findById(req.params.id);
-    if (existingProduct && existingProduct.images.length > 0) {
-      // Merge new images with existing ones, avoiding duplicates
-      const existingImages = existingProduct.images;
-      const newImages = req.body.images.filter(
-        (img) => !existingImages.includes(img)
-      );
-      req.body.images = [...existingImages, ...newImages];
-    }
-    console.log('Updated images:', req.body.images);
-  }
+  console.log('req.body ', req.body);
+  const existingProduct = await Product.findById(req.params.id);
+  console.log('existingProduct ', existingProduct);
+  // if (req.body.images && req.body.images.length > 0) {
+  //   if (existingProduct && existingProduct.images.length > 0) {
+  //     // Merge new images with existing ones, avoiding duplicates
+  //     const existingImages = existingProduct.images;
+  //     const newImages = req.body.images.filter(
+  //       (img) => !existingImages.includes(img)
+  //     );
+  //     req.body.images = [...existingImages, ...newImages];
+  //   }
+  // }
 
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    { existingProduct, ...req.body },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   if (!product) {
     return next(new AppError('No product found with that ID', 404));

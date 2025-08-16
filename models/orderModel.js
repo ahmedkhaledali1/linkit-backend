@@ -82,12 +82,8 @@ const OrderSchema = new mongoose.Schema(
       },
       color: {
         type: String,
-        enum: {
-          values: ['black', 'white'],
-          message: 'Card color must be either black or white',
-        },
+
         required: [true, 'Card color is required'],
-        default: 'black',
       },
       includePrintedLogo: {
         type: Boolean,

@@ -30,7 +30,7 @@ const processUploadedImages = (req, res, next) => {
   if (req.files && req.files.length > 0) {
     // Convert uploaded files to relative paths for database storage
     const imagePaths = req.files.map((file) => getRelativeFilePath(file));
-    console.log('imagePaths..', imageP / aths);
+    // console.log('imagePaths..', imageP / aths);
 
     // console.log('imagePaths', imagePaths);
     // Add the image paths to the request body
@@ -88,7 +88,13 @@ router
 router
   .route('/:id')
   .get(getOneProduct)
-  .patch(protect, uploadMultipleImages, processUploadedImages, updateProduct)
+  .patch(
+    protect,
+    uploadMultipleImages,
+    processUploadedImages,
+    parseFormDataJSON,
+    updateProduct
+  )
   .delete(protect, restrictTo('admin', 'user'), deleteProduct);
 
 // Color management routes
