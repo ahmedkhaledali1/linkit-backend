@@ -18,6 +18,7 @@ const {
   getOrderPopulationOptions,
   formatOrderResponse,
 } = require('../utils/orderUtils');
+const { getRelativeFilePath } = require('../utils/fileUpload');
 
 // Get all orders with filtering, sorting, field limiting, and pagination
 exports.getAllOrders = factory.getAll(Order, [
@@ -93,7 +94,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   }
 
   // Process file uploads
-  processOrderFiles(req.files, req.body);
+  processOrderFiles(req.file, req.body);
 
   // Validate company logo
   const logoError = validateCompanyLogo(
@@ -118,8 +119,8 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   const updateData = buildOrderUpdateObject(req.body);
 
   // Add uploaded file paths to update data
-  if (req.files && req.files.companyLogo) {
-    updateData['cardDesign.companyLogo'] = req.files.companyLogo[0].path;
+  if (req.file) {
+    updateData['cardDesign.companyLogo'] = getRelativeFilePath(req.file);
   }
 
   // Check if there's actually something to update
