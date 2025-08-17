@@ -21,9 +21,7 @@ const {
 
 // Get all orders with filtering, sorting, field limiting, and pagination
 exports.getAllOrders = factory.getAll(Order, [
-  { path: 'customer', select: 'name email' },
   { path: 'product', select: 'title price' },
-  { path: 'createdBy', select: 'name email' },
 ]);
 
 // Create new NFC card order
