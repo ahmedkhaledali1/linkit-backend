@@ -44,7 +44,7 @@ router
 // Main CRUD routes
 router
   .route('/')
-  .get(restrictTo('admin'), getAllCustomOrders)
+  .get(protect, restrictTo('admin'), getAllCustomOrders)
   .post(createCustomOrder);
 
 router

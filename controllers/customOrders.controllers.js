@@ -22,16 +22,10 @@ const {
 } = require('../utils/customOrderUtils');
 
 // Get all custom orders (admin only)
-exports.getAllCustomOrders = factory.getAll(
-  CustomOrder,
-  getCustomOrderPopulationOptions()
-);
+exports.getAllCustomOrders = factory.getAll(CustomOrder);
 
 // Get single custom order
-exports.getOneCustomOrder = factory.getOne(
-  CustomOrder,
-  getCustomOrderPopulationOptions()
-);
+exports.getOneCustomOrder = factory.getOne(CustomOrder);
 
 // Create new custom order request
 exports.createCustomOrder = catchAsync(async (req, res, next) => {
@@ -68,19 +62,19 @@ exports.updateCustomOrder = catchAsync(async (req, res, next) => {
   }
 
   // Check if user has permission to update this order
-  if (
-    req.user.role !== 'admin' &&
-    existingOrder.createdBy.toString() !== req.user._id.toString()
-  ) {
-    return next(
-      new AppError('You can only update your own custom orders', 403)
-    );
-  }
+  // if (
+  //   req.user.role !== 'admin' &&
+  //   existingOrder.createdBy.toString() !== req.user._id.toString()
+  // ) {
+  //   return next(
+  //     new AppError('You can only update your own custom orders', 403)
+  //   );
+  // }
 
   // Only allow updates to pending orders for customers
-  if (req.user.role !== 'admin' && existingOrder.status !== 'pending') {
-    return next(new AppError('You can only update pending custom orders', 400));
-  }
+  // if (req.user.role !== 'admin' && existingOrder.status !== 'pending') {
+  //   return next(new AppError('You can only update pending custom orders', 400));
+  // }
 
   // Validate fields if updating company info or order details
   if (req.body.companyInfo || req.body.orderDetails) {
@@ -99,16 +93,16 @@ exports.updateCustomOrder = catchAsync(async (req, res, next) => {
   const updateData = buildCustomOrderUpdateObject(req.body);
 
   // Customers can only update certain fields
-  if (req.user.role !== 'admin') {
-    // Remove admin-only fields from update data
-    delete updateData.status;
-    delete updateData.adminNotes;
-    delete updateData.handledBy;
-    delete updateData.selectedPackage;
-    delete updateData['customPricing.pricePerCard'];
-    delete updateData['customPricing.totalPrice'];
-    delete updateData['customPricing.isCustom'];
-  }
+  // if (req.user.role !== 'admin') {
+  //   // Remove admin-only fields from update data
+  //   delete updateData.status;
+  //   delete updateData.adminNotes;
+  //   delete updateData.handledBy;
+  //   delete updateData.selectedPackage;
+  //   delete updateData['customPricing.pricePerCard'];
+  //   delete updateData['customPricing.totalPrice'];
+  //   delete updateData['customPricing.isCustom'];
+  // }
 
   // Check if there's actually something to update
   if (Object.keys(updateData).length === 0) {
