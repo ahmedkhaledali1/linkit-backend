@@ -45,7 +45,7 @@ exports.getAll = (Model, populateOptions) =>
 
     // Pagination calculation
     const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 100;
+    const limit = parseInt(req.query.limit, 10) || 10;
     const totalDocs = await Model.countDocuments(features.filterQuery || {});
     const totalPages = Math.ceil(totalDocs / limit);
 
