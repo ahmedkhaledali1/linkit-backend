@@ -54,6 +54,7 @@ const orderRouter = require('./routes/orders');
 const customOrderRouter = require('./routes/customOrders');
 const packageRouter = require('./routes/packages');
 const testimonialsRouter = require('./routes/testimonials');
+const contactRouter = require('./routes/contact');
 const AppError = require('./utils/apiError');
 const globalErrorHandler = require('./controllers/error.controller');
 const rateLimit = require('express-rate-limit');
@@ -108,6 +109,7 @@ app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/custom-orders', customOrderRouter);
 app.use('/api/v1/packages', packageRouter);
 app.use('/api/v1/testimonials', testimonialsRouter);
+app.use('/api/v1/contact', contactRouter);
 
 app.all('*', (req, res, next) => {
   // res.status(404).json({
