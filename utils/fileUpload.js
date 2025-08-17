@@ -12,6 +12,8 @@ if (!fs.existsSync(uploadsDir)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let uploadPath = uploadsDir;
+    console.log('Upload directory path:', uploadsDir);
+    console.log('Current working directory:', process.cwd());
 
     console.log('file..', file);
     // Create subdirectories based on file type or route

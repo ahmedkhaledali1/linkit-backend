@@ -23,7 +23,7 @@ const router = express.Router();
 router.route('/pricing-tier').get(getPricingTierInfo);
 
 // Protected routes (authentication required)
-router.use(protect);
+// router.use(protect);
 
 // Customer routes
 router.route('/my-orders').get(getMyCustomOrders);
