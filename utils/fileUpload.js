@@ -117,6 +117,6 @@ module.exports = {
   uploadGeneral,
   getRelativeFilePath,
   deleteFile,
-  uploadCompanyLogo: uploadImage.single('company-logos'),
+  uploadCompanyLogo: uploadImage.single('companylogo'),
   uploadMultipleImages: uploadImage.array('images', 10),
 };

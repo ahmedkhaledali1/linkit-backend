@@ -117,6 +117,7 @@ const getValidCountries = () => {
 
 // Middleware to parse FormData into nested objects
 const parseFormData = (req, res, next) => {
+  // console.log('req.body ', req.body);
   // console.log('Raw req.body before parsing:', req.body);
   // console.log('req.files ', req.file);
   // Initialize the nested objects

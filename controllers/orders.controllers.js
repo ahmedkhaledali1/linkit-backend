@@ -55,6 +55,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   req.body.total = total;
   req.body.logoSurcharge = logoSurcharge;
 
+  // console.log('req.body.cardDesign', req.body.cardDesign);
   // Validate company logo
   const logoError = validateCompanyLogo(req.body.cardDesign, req.file);
   if (logoError) {
@@ -70,10 +71,11 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   // Create the order
   const newOrder = await Order.create(req.body);
 
+  // console.log('newOrder', newOrder);
   // console.log('req.deliveryError', deliveryError);
   // Populate the created order
   const respon = await newOrder.populate(getOrderPopulationOptions());
-  // console.log('respon', respon);
+  console.log('respon', respon);
   // Format and send response
   const response = formatOrderResponse(
     newOrder,
