@@ -28,30 +28,7 @@ exports.getAllCustomOrders = factory.getAll(CustomOrder);
 exports.getOneCustomOrder = factory.getOne(CustomOrder);
 
 // Create new custom order request
-exports.createCustomOrder = catchAsync(async (req, res, next) => {
-  // Set default values
-  setCustomOrderDefaults(req.body, req.user);
-
-  // Validate required fields
-  const validationError = validateCustomOrderFields(req.body);
-  if (validationError) {
-    return next(new AppError(validationError, 400));
-  }
-
-  // Create the custom order
-  const newCustomOrder = await CustomOrder.create(req.body);
-
-  // Populate the created order
-  await newCustomOrder.populate(getCustomOrderPopulationOptions());
-
-  // Format and send response
-  const response = formatCustomOrderResponse(
-    newCustomOrder,
-    `Custom order request submitted successfully! We'll review your requirements and get back to you within 24 hours.`
-  );
-
-  res.status(201).json(response);
-});
+exports.createCustomOrder = factory.createOne(CustomOrder);
 
 // Update custom order (for customers - limited fields)
 exports.updateCustomOrder = catchAsync(async (req, res, next) => {
