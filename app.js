@@ -40,6 +40,7 @@ app.use(
   })
 );
 
+// restart
 // Ensure uploads directory exists
 const uploadDir = process.env.UPLOADS_DIR || 'public/uploads';
 if (!fs.existsSync(uploadDir)) {
