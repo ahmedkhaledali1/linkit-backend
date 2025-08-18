@@ -31,7 +31,7 @@ app.use(
     }
     next();
   },
-  express.static(process.env.UPLOADS_DIR || 'public/uploads', {
+  express.static('uploads', {
     etag: true,
     lastModified: true,
     setHeaders: (res, path) => {
@@ -40,9 +40,8 @@ app.use(
   })
 );
 
-// restart
 // Ensure uploads directory exists
-const uploadDir = process.env.UPLOADS_DIR || 'public/uploads';
+const uploadDir = 'uploads';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

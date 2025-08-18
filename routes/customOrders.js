@@ -51,6 +51,6 @@ router
   .route('/:id')
   .get(getOneCustomOrder)
   .patch(updateCustomOrder)
-  .delete(restrictTo('admin'), deleteCustomOrder);
+  .delete(protect, restrictTo('admin'), deleteCustomOrder);
 
 module.exports = router;

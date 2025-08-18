@@ -56,7 +56,7 @@ router
   .route('/:id')
   .get(getOneOrder)
   .patch(uploadCompanyLogo, parseFormData, updateOrder)
-  .delete(restrictTo('admin', 'user'), deleteOrder);
+  .delete(protect, restrictTo('admin', 'user'), deleteOrder);
 
 // Order status management
 // router.route('/:id/status').patch(updateOrderStatus);
