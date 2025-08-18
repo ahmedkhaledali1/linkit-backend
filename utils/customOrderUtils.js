@@ -52,7 +52,6 @@ const formatCustomOrderResponse = (
     status: 'success',
     data: {
       customOrder: order,
-      summary: order.getOrderSummary(),
     },
     message,
   };
