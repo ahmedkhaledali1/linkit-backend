@@ -48,3 +48,7 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Upload directories - exclude from version control
+uploads/
+public/uploads/
+

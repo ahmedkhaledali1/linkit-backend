@@ -2,8 +2,9 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '../public/uploads');
+// Ensure uploads directory exists - use a persistent path outside the project root
+const uploadsDir =
+  process.env.UPLOADS_DIR || path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -92,18 +93,44 @@ const uploadGeneral = multer({
 const getRelativeFilePath = (file) => {
   if (!file) return null;
 
-  // Return path relative to public folder
+  // If using UPLOADS_DIR environment variable, return the subdirectory path
+  if (process.env.UPLOADS_DIR) {
+    // Extract the subdirectory path (e.g., 'images', 'companyLogo', etc.)
+    const uploadsDir = process.env.UPLOADS_DIR;
+    const filePath = file.path;
+
+    // Find the subdirectory after the uploads directory
+    const uploadsIndex = filePath.indexOf(uploadsDir);
+    if (uploadsIndex !== -1) {
+      const relativePath = filePath.substring(
+        uploadsIndex + uploadsDir.length + 1
+      ); // +1 for the slash
+      return relativePath;
+    }
+  }
+
+  // Fallback for local development (public/uploads structure)
   const publicIndex = file.path.indexOf('public');
   if (publicIndex !== -1) {
     return file.path.substring(publicIndex + 6); // Remove 'public' from path
   }
+
   return file.filename;
 };
 
 // Helper function to delete file
 const deleteFile = (filePath) => {
   try {
-    const fullPath = path.join(__dirname, '../public', filePath);
+    let fullPath;
+
+    // If using UPLOADS_DIR environment variable
+    if (process.env.UPLOADS_DIR) {
+      fullPath = path.join(process.env.UPLOADS_DIR, filePath);
+    } else {
+      // Fallback for local development
+      fullPath = path.join(__dirname, '../public', filePath);
+    }
+
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
       return true;
