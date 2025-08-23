@@ -97,18 +97,14 @@ const OrderSchema = new mongoose.Schema(
     // Delivery Information (Step 3)
     deliveryInfo: {
       country: {
-        type: String,
-        required: [true, 'Country is required'],
-        trim: true,
-        enum: {
-          values: ['JO', 'UK'],
-          message: 'Country must be JO (Jordan) or UK (United Kingdom)',
-        },
+        type: mongoose.Schema.ObjectId,
+        ref: 'Country',
+        required: [true, 'Country reference is required'],
       },
       city: {
-        type: String,
-        required: [true, 'City is required'],
-        trim: true,
+        type: mongoose.Schema.ObjectId,
+        ref: 'City',
+        required: [true, 'City reference is required'],
       },
       addressLine1: {
         type: String,
@@ -360,6 +356,18 @@ OrderSchema.statics.findByCountry = function (country) {
     .populate('customer', 'name email')
     .sort('-orderDate');
 };
+
+// Add soft delete fields to the schema
+OrderSchema.add({
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+});
 
 const Order = mongoose.model('Order', OrderSchema);
 module.exports = Order;

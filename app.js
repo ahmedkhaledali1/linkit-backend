@@ -55,6 +55,11 @@ const customOrderRouter = require('./routes/customOrders');
 const packageRouter = require('./routes/packages');
 const testimonialsRouter = require('./routes/testimonials');
 const contactRouter = require('./routes/contact');
+const homeRouter = require('./routes/home');
+const subscriberRouter = require('./routes/subscribers');
+const socialMediaRouter = require('./routes/socialMedia');
+const countryRouter = require('./routes/countries');
+const cityRouter = require('./routes/cities');
 const AppError = require('./utils/apiError');
 const globalErrorHandler = require('./controllers/error.controller');
 const rateLimit = require('express-rate-limit');
@@ -110,6 +115,11 @@ app.use('/api/v1/custom-orders', customOrderRouter);
 app.use('/api/v1/packages', packageRouter);
 app.use('/api/v1/testimonials', testimonialsRouter);
 app.use('/api/v1/contact', contactRouter);
+app.use('/api/v1/home', homeRouter);
+app.use('/api/v1/subscribers', subscriberRouter);
+app.use('/api/v1/social-media', socialMediaRouter);
+app.use('/api/v1/countries', countryRouter);
+app.use('/api/v1/cities', cityRouter);
 
 app.all('*', (req, res, next) => {
   // res.status(404).json({

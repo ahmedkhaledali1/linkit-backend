@@ -1,10 +1,7 @@
 const AppError = require('./apiError');
 const { uploadMultipleImages, getRelativeFilePath } = require('./fileUpload');
-// Country-City mapping for delivery validation
-const COUNTRY_CITY_MAP = {
-  JO: ['Amman', 'Irbid', 'Zarqa', 'Aqaba', 'Salt'],
-  UK: ['London', 'Manchester', 'Birmingham', 'Liverpool', 'Bristol'],
-};
+const Country = require('../models/countryModel');
+const City = require('../models/cityModel');
 
 /**
  * Validate company logo requirements
@@ -33,44 +30,52 @@ const validateCompanyLogo = (cardDesign, file = {}, existingOrder = null) => {
 
 /**
  * Validate country and city combination
- * @param {string} country - Country code
- * @param {string} city - City name
- * @returns {string|null} - Error message or null if valid
+ * @param {string} countryId - Country ID
+ * @param {string} cityId - City ID
+ * @returns {Promise<string|null>} - Error message or null if valid
  */
-const validateCountryCity = (country, city) => {
-  if (!country || !city) {
+const validateCountryCity = async (countryId, cityId) => {
+  if (!countryId || !cityId) {
     return null; // Skip validation if either is missing
   }
 
-  const validCities = COUNTRY_CITY_MAP[country];
-  if (!validCities) {
-    const availableCountries = Object.keys(COUNTRY_CITY_MAP).join(', ');
-    return `Invalid country '${country}'. Available countries are: ${availableCountries}`;
-  }
+  try {
+    // Verify country exists
+    const countryDoc = await Country.findById(countryId);
+    if (!countryDoc) {
+      return `Invalid country ID '${countryId}'. Country not found.`;
+    }
 
-  if (!validCities.includes(city)) {
-    return `Invalid city '${city}' for country '${country}'. Valid cities are: ${validCities.join(
-      ', '
-    )}`;
-  }
+    // Verify city exists and belongs to the country
+    const cityDoc = await City.findById(cityId);
+    if (!cityDoc) {
+      return `Invalid city ID '${cityId}'. City not found.`;
+    }
 
-  return null;
+    if (cityDoc.country.toString() !== countryId) {
+      return `City '${cityDoc.name}' does not belong to country '${countryDoc.name}'.`;
+    }
+
+    return null;
+  } catch (error) {
+    return `Error validating country and city: ${error.message}`;
+  }
 };
 
 /**
  * Validate delivery information
  * @param {Object} deliveryInfo - Delivery information object
  * @param {Object} existingOrder - Existing order (for updates)
- * @returns {string|null} - Error message or null if valid
+ * @returns {Promise<string|null>} - Error message or null if valid
  */
-const validateDeliveryInfo = (deliveryInfo, existingOrder = null) => {
+const validateDeliveryInfo = async (deliveryInfo, existingOrder = null) => {
   if (!deliveryInfo) return null;
 
   // Use new values if provided, otherwise fall back to existing values
   const country = deliveryInfo.country || existingOrder?.deliveryInfo?.country;
   const city = deliveryInfo.city || existingOrder?.deliveryInfo?.city;
 
-  return validateCountryCity(country, city);
+  return await validateCountryCity(country, city);
 };
 
 /**
@@ -100,19 +105,38 @@ const validateRequiredFields = (orderData) => {
 
 /**
  * Get available cities for a country
- * @param {string} country - Country code
- * @returns {Array} - Array of valid cities
+ * @param {string} countryId - Country ID
+ * @returns {Promise<Array>} - Array of valid cities
  */
-const getValidCities = (country) => {
-  return COUNTRY_CITY_MAP[country] || [];
+const getValidCities = async (countryId) => {
+  try {
+    const cities = await City.find({
+      country: countryId,
+      isActive: true,
+      isDeleted: { $ne: true },
+    }).select('name _id');
+    return cities;
+  } catch (error) {
+    console.error('Error getting valid cities:', error);
+    return [];
+  }
 };
 
 /**
  * Get all available countries
- * @returns {Array} - Array of country codes
+ * @returns {Promise<Array>} - Array of countries with ID and name
  */
-const getValidCountries = () => {
-  return Object.keys(COUNTRY_CITY_MAP);
+const getValidCountries = async () => {
+  try {
+    const countries = await Country.find({
+      isActive: true,
+      isDeleted: { $ne: true },
+    }).select('name code _id');
+    return countries;
+  } catch (error) {
+    console.error('Error getting valid countries:', error);
+    return [];
+  }
 };
 
 // Middleware to parse FormData into nested objects
@@ -242,5 +266,4 @@ module.exports = {
   parseFormData,
   processOrderFiles,
   getValidCountries,
-  COUNTRY_CITY_MAP,
 };

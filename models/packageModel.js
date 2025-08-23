@@ -177,5 +177,17 @@ PackageSchema.pre('save', async function (next) {
   next();
 });
 
+// Add soft delete fields to the schema
+PackageSchema.add({
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+});
+
 const Package = mongoose.model('Package', PackageSchema);
 module.exports = Package;

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Jordan",
+    "code": "JO",
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "name": "United Kingdom",
+    "code": "UK",
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "name": "United States",
+    "code": "US",
+    "isActive": true,
+    "displayOrder": 3
+  },
+  {
+    "name": "Canada",
+    "code": "CA",
+    "isActive": true,
+    "displayOrder": 4
+  }
+]

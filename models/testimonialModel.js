@@ -37,5 +37,17 @@ const TestimonialSchema = new mongoose.Schema(
   }
 );
 
+// Add soft delete fields to the schema
+TestimonialSchema.add({
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+});
+
 const Testimonial = mongoose.model('Testimonial', TestimonialSchema);
 module.exports = Testimonial;

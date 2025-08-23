@@ -299,5 +299,17 @@ CustomOrderSchema.index({ createdBy: 1 });
 //   next();
 // });
 
+// Add soft delete fields to the schema
+CustomOrderSchema.add({
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+});
+
 const CustomOrder = mongoose.model('CustomOrder', CustomOrderSchema);
 module.exports = CustomOrder;

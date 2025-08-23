@@ -81,5 +81,17 @@ ContactSchema.index({ status: 1 });
 ContactSchema.index({ date: -1 });
 ContactSchema.index({ email: 1 });
 
+// Add soft delete fields to the schema
+ContactSchema.add({
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+});
+
 const Contact = mongoose.model('Contact', ContactSchema);
 module.exports = Contact;

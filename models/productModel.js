@@ -85,6 +85,15 @@ const ProductSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    // Soft delete fields
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true, // This will automatically handle createdAt and updatedAt
@@ -98,7 +107,7 @@ ProductSchema.index({ title: 'text', description: 'text' });
 ProductSchema.index({ price: 1 });
 ProductSchema.index({ category: 1 });
 ProductSchema.index({ createdBy: 1 });
-ProductSchema.index({ isActive: 1 });
+ProductSchema.index({ isDeleted: 1 });
 
 // Static method to find products by price range
 ProductSchema.statics.findByPriceRange = function (minPrice, maxPrice) {

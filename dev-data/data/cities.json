@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Amman",
+    "deliveryFee": 5,
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "name": "Irbid",
+    "deliveryFee": 8,
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "name": "Zarqa",
+    "deliveryFee": 6,
+    "isActive": true,
+    "displayOrder": 3
+  },
+  {
+    "name": "Aqaba",
+    "deliveryFee": 15,
+    "isActive": true,
+    "displayOrder": 4
+  },
+  {
+    "name": "Salt",
+    "deliveryFee": 7,
+    "isActive": true,
+    "displayOrder": 5
+  },
+  {
+    "name": "London",
+    "deliveryFee": 10,
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "name": "Manchester",
+    "deliveryFee": 12,
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "name": "Birmingham",
+    "deliveryFee": 11,
+    "isActive": true,
+    "displayOrder": 3
+  },
+  {
+    "name": "Liverpool",
+    "deliveryFee": 13,
+    "isActive": true,
+    "displayOrder": 4
+  },
+  {
+    "name": "Bristol",
+    "deliveryFee": 12,
+    "isActive": true,
+    "displayOrder": 5
+  },
+  {
+    "name": "New York",
+    "deliveryFee": 20,
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "name": "Los Angeles",
+    "deliveryFee": 18,
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "name": "Chicago",
+    "deliveryFee": 15,
+    "isActive": true,
+    "displayOrder": 3
+  },
+  {
+    "name": "Houston",
+    "deliveryFee": 16,
+    "isActive": true,
+    "displayOrder": 4
+  },
+  {
+    "name": "Phoenix",
+    "deliveryFee": 14,
+    "isActive": true,
+    "displayOrder": 5
+  },
+  {
+    "name": "Toronto",
+    "deliveryFee": 25,
+    "isActive": true,
+    "displayOrder": 1
+  },
+  {
+    "name": "Montreal",
+    "deliveryFee": 22,
+    "isActive": true,
+    "displayOrder": 2
+  },
+  {
+    "name": "Vancouver",
+    "deliveryFee": 28,
+    "isActive": true,
+    "displayOrder": 3
+  },
+  {
+    "name": "Calgary",
+    "deliveryFee": 24,
+    "isActive": true,
+    "displayOrder": 4
+  },
+  {
+    "name": "Edmonton",
+    "deliveryFee": 26,
+    "isActive": true,
+    "displayOrder": 5
+  }
+]

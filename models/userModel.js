@@ -19,7 +19,7 @@ const UserShcema = new mongoose.Schema({
   phote: { type: String },
   role: {
     type: String,
-    enum: ['user',  'admin'],
+    enum: ['user', 'admin'],
     default: 'user',
   },
   password: {
@@ -81,6 +81,18 @@ UserShcema.methods.createPasswordResetToken = function () {
   console.log('passwordResetToken...', this.passwordResetToken);
   return resetToken;
 };
+
+// Add soft delete fields to the schema
+UserShcema.add({
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
+});
 
 const User = mongoose.model('User', UserShcema);
 module.exports = User;
