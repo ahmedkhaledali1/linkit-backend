@@ -39,27 +39,27 @@ const validateCountryCity = async (countryId, cityId) => {
     return null; // Skip validation if either is missing
   }
 
-  try {
-    // Verify country exists
-    const countryDoc = await Country.findById(countryId);
-    if (!countryDoc) {
-      return `Invalid country ID '${countryId}'. Country not found.`;
-    }
+  // try {
+  //   // Verify country exists
+  //   const countryDoc = await Country.findById(countryId);
+  //   if (!countryDoc) {
+  //     return `Invalid country ID '${countryId}'. Country not found.`;
+  //   }
 
-    // Verify city exists and belongs to the country
-    const cityDoc = await City.findById(cityId);
-    if (!cityDoc) {
-      return `Invalid city ID '${cityId}'. City not found.`;
-    }
+  //   // Verify city exists and belongs to the country
+  //   const cityDoc = await City.findById(cityId);
+  //   if (!cityDoc) {
+  //     return `Invalid city ID '${cityId}'. City not found.`;
+  //   }
 
-    if (cityDoc.country.toString() !== countryId) {
-      return `City '${cityDoc.name}' does not belong to country '${countryDoc.name}'.`;
-    }
+  //   if (cityDoc.country.toString() !== countryId) {
+  //     return `City '${cityDoc.name}' does not belong to country '${countryDoc.name}'.`;
+  //   }
 
-    return null;
-  } catch (error) {
-    return `Error validating country and city: ${error.message}`;
-  }
+  //   return null;
+  // } catch (error) {
+  //   return `Error validating country and city: ${error.message}`;
+  // }
 };
 
 /**

@@ -62,11 +62,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     return next(new AppError(logoError, 400));
   }
 
-  // Validate delivery info
-  const deliveryError = validateDeliveryInfo(req.body.deliveryInfo);
-  if (deliveryError) {
-    return next(new AppError(deliveryError, 400));
-  }
+  console.log('req.body,,, before deleviry validation', req.body);
 
   // Create the order
   const newOrder = await Order.create(req.body);
