@@ -48,16 +48,35 @@ exports.getAll = (Model, populateOptions) =>
     // Add soft delete filter to exclude deleted documents
     const softDeleteFilter = { isDeleted: { $ne: true } };
 
-    const features = new APIFeatures(Model.find(softDeleteFilter), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+    const features = req?.query?.disablePagination
+      ? new APIFeatures(Model.find(softDeleteFilter), req.query)
+          .filter()
+          .sort()
+          .limitFields()
+      : new APIFeatures(Model.find(softDeleteFilter), req.query)
+          .filter()
+          .sort()
+          .limitFields()
+          .paginate();
 
     let query = features.query;
     if (populateOptions) query = query.populate(populateOptions);
 
     const docs = await query;
+
+    console.log('docs..', docs);
+
+    const disablePagination =
+      req.query.disablePgination === 'true' ||
+      req.query.disablePgination === true;
+
+    if (disablePagination) {
+      return res.status(200).json({
+        status: 'success',
+        results: docs.length,
+        data: { data: docs },
+      });
+    }
 
     // Pagination calculation with soft delete filter
     const page = parseInt(req.query.page, 10) || 1;

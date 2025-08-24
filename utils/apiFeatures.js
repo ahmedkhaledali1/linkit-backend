@@ -3,19 +3,17 @@ class APIFeatures {
     this.query = query;
     this.queryStr = queryStr;
   }
-  filter() {
-    // console.log(this.query);
-    // console.log(this.queryStr);
-    const queryObj = { ...this.queryStr };
-    // console.log(queryObj);
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach((el) => delete queryObj[el]);
 
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    console.log(JSON.parse(queryStr));
-    // gte, gt. lte, lt
-    this.query = this.query.find(JSON.parse(queryStr));
+  filter() {
+    const queryObj = { ...this.queryStr };
+    const excluded = ['page', 'sort', 'limit', 'fields', 'disablePagination'];
+    excluded.forEach((k) => delete queryObj[k]);
+
+    let str = JSON.stringify(queryObj);
+    str = str.replace(/\b(gte|gt|lte|lt)\b/g, (m) => `$${m}`);
+
+    this.filterQuery = JSON.parse(str);
+    this.query = this.query.find(this.filterQuery);
     return this;
   }
   sort() {

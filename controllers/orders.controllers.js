@@ -19,6 +19,7 @@ const {
   formatOrderResponse,
 } = require('../utils/orderUtils');
 const { getRelativeFilePath } = require('../utils/fileUpload');
+const City = require('../models/cityModel');
 
 // Get all orders with filtering, sorting, field limiting, and pagination
 exports.getAllOrders = factory.getAll(Order, [
@@ -46,14 +47,23 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   // Process file uploads
   processOrderFiles(req.file, req.body);
 
+  const city = await City.findById(req.body?.deliveryInfo?.city);
+
+  if (!city) {
+    return next(new AppError('City is not exist '));
+  }
+  console.log('city...', city?.deliveryFee);
   // Calculate pricing
-  const { total, logoSurcharge } = calculateOrderTotal(
+  const { total, logoSurcharge, finalTotal } = calculateOrderTotal(
     product.price,
-    req.body.cardDesign?.includePrintedLogo
+    req.body.cardDesign?.includePrintedLogo,
+    5,
+    city?.deliveryFee
   );
   req.body.productPrice = product.price;
   req.body.total = total;
   req.body.logoSurcharge = logoSurcharge;
+  req.body.finalTotal = finalTotal;
 
   // console.log('req.body.cardDesign', req.body.cardDesign);
   // Validate company logo
@@ -62,7 +72,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     return next(new AppError(logoError, 400));
   }
 
-  console.log('req.body,,, before deleviry validation', req.body);
+  // console.log('req.body,,, before deleviry validation', req.body);
 
   // Create the order
   const newOrder = await Order.create(req.body);

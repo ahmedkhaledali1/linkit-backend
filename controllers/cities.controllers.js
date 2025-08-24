@@ -5,7 +5,10 @@ const catchAsync = require('../utils/catchAsync');
 const ApiError = require('../utils/apiError');
 
 // Use factory functions for basic CRUD operations
-exports.getAllCities = factory.getAll(City);
+exports.getAllCities = factory.getAll(City, {
+  path: 'country',
+  select: 'name',
+});
 exports.getCity = factory.getOne(City);
 exports.createCity = factory.createOne(City);
 exports.updateCity = factory.updateOne(City);
