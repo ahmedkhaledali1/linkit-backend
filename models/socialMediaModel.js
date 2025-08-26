@@ -8,10 +8,9 @@ const SocialMediaSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Platform name is required'],
       enum: {
-        values: ['instagram', 'facebook', 'linkedin', 'whatsapp'],
+        values: ['instagram', 'facebook', 'linkedin', 'whatsapp', 'linkedin'],
         message: 'Platform must be instagram, facebook, linkedin, or whatsapp',
       },
-      unique: true,
     },
 
     // Social media URLs
