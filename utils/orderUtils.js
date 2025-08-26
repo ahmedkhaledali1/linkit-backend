@@ -10,7 +10,7 @@ const { getRelativeFilePath } = require('./fileUpload');
 const calculateOrderTotal = (
   productPrice,
   includePrintedLogo = false,
-  logoSurcharge = 5,
+  logoSurcharge = 0,
   deliveryFee
 ) => {
   const surcharge = includePrintedLogo ? logoSurcharge : 0;

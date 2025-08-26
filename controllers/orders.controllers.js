@@ -57,7 +57,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   const { total, logoSurcharge, finalTotal } = calculateOrderTotal(
     product.price,
     req.body.cardDesign?.includePrintedLogo,
-    5,
+    0,
     city?.deliveryFee
   );
   req.body.productPrice = product.price;
@@ -113,13 +113,6 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   }
 
   // Validate delivery info
-  const deliveryError = validateDeliveryInfo(
-    req.body.deliveryInfo,
-    existingOrder
-  );
-  if (deliveryError) {
-    return next(new AppError(deliveryError, 400));
-  }
 
   // Build update object
   const updateData = buildOrderUpdateObject(req.body);
@@ -143,6 +136,8 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
       runValidators: false, // Disable validation to allow partial updates
     }
   );
+
+  console.log('order..', order);
 
   // Populate the updated order
   await order.populate(getOrderPopulationOptions());
