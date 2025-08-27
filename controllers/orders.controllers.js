@@ -23,7 +23,7 @@ const City = require('../models/cityModel');
 
 // Get all orders with filtering, sorting, field limiting, and pagination
 exports.getAllOrders = factory.getAll(Order, [
-  { path: 'product', select: 'title price cardDesign' },
+  { path: 'product', select: 'title price cardDesigns' },
 ]);
 
 // Create new NFC card order

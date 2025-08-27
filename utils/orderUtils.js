@@ -133,7 +133,11 @@ const setOrderDefaults = (orderData, user) => {
  * @returns {Array} - Array of population options
  */
 const getOrderPopulationOptions = () => {
-  return [{ path: 'product', select: 'title price images colors' }];
+  return [
+    { path: 'product', select: 'title price images cardDesigns' },
+    { path: 'deliveryInfo.country', select: 'name code' },
+    { path: 'deliveryInfo.city', select: 'name deliveryFee' },
+  ];
 };
 
 /**
