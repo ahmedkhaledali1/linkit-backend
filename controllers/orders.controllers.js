@@ -30,7 +30,7 @@ exports.getAllOrders = factory.getAll(Order, [
 exports.createOrder = catchAsync(async (req, res, next) => {
   // Set default values
   console.log('Creating order with body:', JSON.stringify(req.body, null, 2));
-  console.log('Files received:', req.file || req.files);
+  console.log('Files received:', req.file);
 
   // Validate required fields
   const requiredFieldsError = validateRequiredFields(req.body);

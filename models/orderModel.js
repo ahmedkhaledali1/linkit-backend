@@ -56,19 +56,18 @@ const OrderSchema = new mongoose.Schema(
       email: {
         type: String,
         required: [true, 'Email is required'],
-        lowercase: true,
         validate: [validator.isEmail, 'Please provide a valid email'],
+      },
+      businessEmail: {
+        type: String,
       },
       linkedinUrl: {
         type: String,
         trim: true,
-        validate: {
-          validator: function (url) {
-            if (!url) return true; // Optional field
-            return validator.isURL(url);
-          },
-          message: 'Please provide a valid LinkedIn URL',
-        },
+      },
+      instagramUrl: {
+        type: String,
+        trim: true,
       },
     },
 
@@ -137,6 +136,10 @@ const OrderSchema = new mongoose.Schema(
         required: [true, 'Delivery email is required'],
         lowercase: true,
         validate: [validator.isEmail, 'Please provide a valid delivery email'],
+      },
+      postcode: {
+        type: String,
+        trim: true,
       },
     },
 
