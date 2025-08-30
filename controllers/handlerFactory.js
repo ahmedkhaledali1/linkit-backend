@@ -64,7 +64,7 @@ exports.getAll = (Model, populateOptions) =>
 
     const docs = await query;
 
-    console.log('docs..', docs);
+    // console.log('docs..', docs);
 
     const disablePagination =
       req.query.disablePgination === 'true' ||

@@ -11,14 +11,21 @@ const calculateOrderTotal = (
   productPrice,
   includePrintedLogo = false,
   logoSurcharge = 0,
-  deliveryFee
+  deliveryFee,
+  addons = []
 ) => {
+  console.log('addons in calc total...', addons);
   const surcharge = includePrintedLogo ? logoSurcharge : 0;
   const delivery = deliveryFee ?? 0;
+  const addonsTotal = addons.reduce(
+    (sum, addon) => sum + (addon.price || 0),
+    0
+  );
   return {
-    total: productPrice + surcharge,
+    total: productPrice + surcharge + delivery + addonsTotal,
     logoSurcharge: surcharge,
-    finalTotal: productPrice + surcharge + delivery,
+    addonsTotal: addonsTotal,
+    finalTotal: productPrice + surcharge + delivery + addonsTotal,
   };
 };
 
@@ -137,6 +144,7 @@ const getOrderPopulationOptions = () => {
     { path: 'product', select: 'title price images cardDesigns' },
     { path: 'deliveryInfo.country', select: 'name code' },
     { path: 'deliveryInfo.city', select: 'name deliveryFee' },
+    { path: 'addons.addon' },
   ];
 };
 

@@ -93,6 +93,23 @@ const OrderSchema = new mongoose.Schema(
       },
     },
 
+    addons: [
+      {
+        addon: {
+          type: mongoose.Schema.ObjectId,
+          ref: 'Addon',
+        },
+        addonValue: {
+          type: String,
+        },
+      },
+    ],
+    addonImages: [
+      {
+        type: String,
+      },
+    ],
+
     // Delivery Information (Step 3)
     deliveryInfo: {
       country: {
@@ -152,6 +169,9 @@ const OrderSchema = new mongoose.Schema(
       },
       default: 'cash',
       required: [true, 'Payment method is required'],
+    },
+    despositeTransactionImg: {
+      type: String, // File path to uploaded transaction image
     },
 
     // Order Details

@@ -17,21 +17,48 @@ const {
   setOrderDefaults,
   getOrderPopulationOptions,
   formatOrderResponse,
+  processOrderAddonsFiles,
 } = require('../utils/orderUtils');
 const { getRelativeFilePath } = require('../utils/fileUpload');
 const City = require('../models/cityModel');
+const AddonModel = require('../models/AddonModel');
 
 // Get all orders with filtering, sorting, field limiting, and pagination
 exports.getAllOrders = factory.getAll(Order, [
   { path: 'product', select: 'title price cardDesigns' },
+  { path: 'addons.addon' },
 ]);
 
 // Create new NFC card order
 exports.createOrder = catchAsync(async (req, res, next) => {
-  // Set default values
-  console.log('Creating order with body:', JSON.stringify(req.body, null, 2));
-  console.log('Files received:', req.file);
+  if (
+    req?.files &&
+    req?.files?.addonImages &&
+    req?.files?.addonImages?.length > 0
+  ) {
+    req.body.addonImages = req.files.addonImages.map((file) =>
+      getRelativeFilePath(file)
+    );
+  }
+  if (req?.files && req?.files?.companyLogo?.[0]) {
+    req.body.cardDesign.companyLogo = getRelativeFilePath(
+      req.files.companyLogo[0]
+    );
+  }
 
+  // console.log('req.files', req.files);
+  if (req?.files && req?.files?.despositeTransactionImg?.[0]) {
+    req.body.despositeTransactionImg = getRelativeFilePath(
+      req.files.despositeTransactionImg[0]
+    );
+  }
+
+  req?.body?.addons.map((addon) => {
+    if (addon?.inputType === 'image') {
+      addon.addonValue = getRelativeFilePath(req.files.addonImages[0]);
+    }
+  });
+  // console.log('req.body,,, before deleviry validation', req.body);
   // Validate required fields
   const requiredFieldsError = validateRequiredFields(req.body);
   if (requiredFieldsError) {
@@ -45,20 +72,28 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   }
 
   // Process file uploads
-  processOrderFiles(req.file, req.body);
+  // processOrderFiles(req.files.companyLogo, req.body);
 
   const city = await City.findById(req.body?.deliveryInfo?.city);
 
   if (!city) {
     return next(new AppError('City is not exist '));
   }
-  console.log('city...', city?.deliveryFee);
+  // console.log('city...', city?.deliveryFee);
   // Calculate pricing
+  const addons = await Promise.all(
+    req?.body?.addons?.map(async (addon) => {
+      const addonDetails = await AddonModel.findById(addon.addon);
+      return addonDetails;
+    })
+  );
+  // console.log('addons...', addons);
   const { total, logoSurcharge, finalTotal } = calculateOrderTotal(
     product.price,
     req.body.cardDesign?.includePrintedLogo,
     0,
-    city?.deliveryFee
+    city?.deliveryFee,
+    addons
   );
   req.body.productPrice = product.price;
   req.body.total = total;
@@ -72,8 +107,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     return next(new AppError(logoError, 400));
   }
 
-  // console.log('req.body,,, before deleviry validation', req.body);
-
   // Create the order
   const newOrder = await Order.create(req.body);
 
@@ -81,7 +114,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   // console.log('req.deliveryError', deliveryError);
   // Populate the created order
   const respon = await newOrder.populate(getOrderPopulationOptions());
-  console.log('respon', respon);
+  // console.log('respon', respon);
   // Format and send response
   const response = formatOrderResponse(
     newOrder,
@@ -99,13 +132,27 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
     return next(new AppError('No order found with that ID', 404));
   }
 
-  // Process file uploads
-  processOrderFiles(req.file, req.body);
+  if (req.files && req.files.addonImages && req.files.addonImages.length > 0) {
+    req.body.addonImages = req.files.addonImages.map((file) =>
+      getRelativeFilePath(file)
+    );
+  }
+  if (req.files && req.files.companyLogo[0]) {
+    req.body.cardDesign.companyLogo = getRelativeFilePath(
+      req.files.companyLogo[0]
+    );
+  }
+  // console.log('req.files', req.files);
+  if (req.files && req.files.despositeTransactionImg[0]) {
+    req.body.despositeTransactionImg = getRelativeFilePath(
+      req.files.despositeTransactionImg[0]
+    );
+  }
 
   // Validate company logo
   const logoError = validateCompanyLogo(
     req.body.cardDesign,
-    req.file,
+    req.files.companyLogo[0],
     existingOrder
   );
   if (logoError) {
@@ -118,9 +165,6 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
   const updateData = buildOrderUpdateObject(req.body);
 
   // Add uploaded file paths to update data
-  if (req.file) {
-    updateData['cardDesign.companyLogo'] = getRelativeFilePath(req.file);
-  }
 
   // Check if there's actually something to update
   if (Object.keys(updateData).length === 0) {
@@ -133,7 +177,7 @@ exports.updateOrder = catchAsync(async (req, res, next) => {
     { $set: updateData },
     {
       new: true,
-      runValidators: false, // Disable validation to allow partial updates
+      runValidators: false,
     }
   );
 

@@ -13,19 +13,17 @@ if (!fs.existsSync(uploadsDir)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let uploadPath = uploadsDir;
-    console.log('Upload directory path:', uploadsDir);
-    console.log('Current working directory:', process.cwd());
-
-    console.log('file..', file);
-    // Create subdirectories based on file type or route
-    if (file.fieldname === 'images') {
+    // Determine subdirectory based on fieldname
+    if (file.fieldname === 'images' || file.fieldname === 'image') {
       uploadPath = path.join(uploadsDir, 'images');
     } else if (file.fieldname === 'documents') {
       uploadPath = path.join(uploadsDir, 'documents');
-    } else if (file.fieldname === 'image') {
-      uploadPath = path.join(uploadsDir, 'images');
     } else if (file.fieldname === 'companyLogo') {
       uploadPath = path.join(uploadsDir, 'companyLogo');
+    } else if (file.fieldname === 'despositeTransactionImg') {
+      uploadPath = path.join(uploadsDir, 'despositeTransactionImg');
+    } else if (file.fieldname === 'addonImages') {
+      uploadPath = path.join(uploadsDir, 'addonImages');
     } else {
       uploadPath = path.join(uploadsDir, 'general');
     }
@@ -89,6 +87,16 @@ const uploadGeneral = multer({
   //   },
 });
 
+// Combined upload function for orders (handles both companyLogo and addonImages)
+const uploadOrderFiles = multer({
+  storage: storage,
+  fileFilter: imageFilter,
+}).fields([
+  { name: 'companyLogo', maxCount: 1 },
+  { name: 'despositeTransactionImg', maxCount: 1 },
+  { name: 'addonImages', maxCount: 10 },
+]);
+
 // Helper function to get file path for database storage
 const getRelativeFilePath = (file) => {
   if (!file) return null;
@@ -141,11 +149,43 @@ const deleteFile = (filePath) => {
   return false;
 };
 
+// Flexible upload function that handles both single and multiple files
+const createFlexibleUpload = (fieldName, maxCount = 1) => {
+  if (maxCount === 1) {
+    return uploadImage.single(fieldName);
+  } else {
+    return uploadImage.array(fieldName, maxCount);
+  }
+};
+
+// Pre-configured flexible uploads
+const flexibleUploads = {
+  // Single file uploads
+  companyLogo: createFlexibleUpload('companyLogo', 1),
+  singleImage: createFlexibleUpload('image', 1),
+
+  // Multiple file uploads
+  addonImages: createFlexibleUpload('addonImages', 10),
+  multipleImages: createFlexibleUpload('images', 10),
+  documents: createFlexibleUpload('documents', 5),
+
+  // Combined uploads for specific use cases
+  orderFiles: uploadOrderFiles,
+
+  // Dynamic upload function that can be used for any field
+  dynamic: (fieldName, maxCount = 1) =>
+    createFlexibleUpload(fieldName, maxCount),
+};
+
 module.exports = {
   uploadImage,
   uploadGeneral,
   getRelativeFilePath,
   deleteFile,
+  // Legacy exports for backward compatibility
   uploadCompanyLogo: uploadImage.single('companyLogo'),
+  uploadAddonImages: uploadImage.array('addonImages', 10),
   uploadMultipleImages: uploadImage.array('images', 10),
+  // New flexible upload system
+  ...flexibleUploads,
 };

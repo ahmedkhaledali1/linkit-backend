@@ -18,7 +18,7 @@ const {
   // getOrdersDashboard,
 } = require('../controllers/orders.controllers');
 const { protect, restrictTo } = require('../controllers/authConroller');
-const { uploadCompanyLogo } = require('../utils/fileUpload');
+const { orderFiles } = require('../utils/fileUpload');
 const multer = require('multer');
 const { parseFormData } = require('../utils/orderValidation');
 const { processOrderFiles } = require('../utils/orderUtils');
@@ -50,12 +50,12 @@ const router = express.Router();
 router
   .route('/')
   .get(getAllOrders)
-  .post(uploadCompanyLogo, parseFormData, createOrder);
+  .post(orderFiles, parseFormData, createOrder);
 
 router
   .route('/:id')
   .get(getOneOrder)
-  .patch(uploadCompanyLogo, parseFormData, updateOrder)
+  .patch(orderFiles, parseFormData, updateOrder)
   .delete(protect, restrictTo('admin', 'user'), deleteOrder);
 
 // Order status management

@@ -60,6 +60,7 @@ const subscriberRouter = require('./routes/subscribers');
 const socialMediaRouter = require('./routes/socialMedia');
 const countryRouter = require('./routes/countries');
 const cityRouter = require('./routes/cities');
+const addonsRouter = require('./routes/addons');
 const AppError = require('./utils/apiError');
 const globalErrorHandler = require('./controllers/error.controller');
 const rateLimit = require('express-rate-limit');
@@ -120,6 +121,7 @@ app.use('/api/v1/subscribers', subscriberRouter);
 app.use('/api/v1/social-media', socialMediaRouter);
 app.use('/api/v1/countries', countryRouter);
 app.use('/api/v1/cities', cityRouter);
+app.use('/api/v1/addons', addonsRouter);
 
 app.all('*', (req, res, next) => {
   // res.status(404).json({
@@ -133,5 +135,7 @@ app.all('*', (req, res, next) => {
 
   next(new AppError(`Can not find ${req.originalUrl} on the server`, 404));
 });
+// Multer error handler
+
 app.use(globalErrorHandler);
 module.exports = app;

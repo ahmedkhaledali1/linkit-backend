@@ -8,7 +8,7 @@ const SocialMediaSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Platform name is required'],
       enum: {
-        values: ['instagram', 'facebook', 'linkedin', 'whatsapp', 'linkedin'],
+        values: ['instagram', 'facebook', 'linkedin', 'whatsapp'],
         message: 'Platform must be instagram, facebook, linkedin, or whatsapp',
       },
     },
@@ -21,35 +21,9 @@ const SocialMediaSchema = new mongoose.Schema(
       validate: {
         validator: function (url) {
           if (!url) return false;
-
-          // Platform-specific URL validation
-          const platform = this.platform;
-          const urlLower = url.toLowerCase();
-
-          switch (platform) {
-            case 'instagram':
-              return (
-                urlLower.includes('instagram.com') ||
-                urlLower.includes('instagr.am')
-              );
-            case 'facebook':
-              return (
-                urlLower.includes('facebook.com') || urlLower.includes('fb.com')
-              );
-            case 'linkedin':
-              return urlLower.includes('linkedin.com');
-            case 'whatsapp':
-              return (
-                urlLower.includes('wa.me') ||
-                urlLower.includes('whatsapp.com') ||
-                /^\+?[1-9]\d{1,14}$/.test(url)
-              );
-            default:
-              return validator.isURL(url);
-          }
+          return validator.isURL(url);
         },
-        message:
-          'Please provide a valid social media URL for the selected platform',
+        message: 'Please provide a valid social media URL',
       },
     },
 
